@@ -230,9 +230,9 @@ function Scene({ activePainting, onPaintingClick }: SceneProps) {
           maxWidth={6.2}
           lineHeight={1.4}
         >
-          "The art of Alaa is a daring journey. It captures the unseen, inviting
+          &quot;The art of Alaa is a daring journey. It captures the unseen, inviting
           you to pause, look deeper, and find the extraordinary in the quietest
-          moments."
+          moments.&quot;
         </Text>
       </group>
     </>
