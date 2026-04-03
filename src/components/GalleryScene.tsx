@@ -45,7 +45,7 @@ function CameraRig({ activePainting }: CameraRigProps) {
         camera.updateProjectionMatrix();
       }
     }
-  }, [camera, size]);
+  }, [camera, size.width, size.height]);
 
   useEffect(() => {
     if (activePainting) {
