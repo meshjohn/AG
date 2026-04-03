@@ -1,0 +1,265 @@
+.header {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: rgba(10, 8, 6, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 168, 75, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.logoArtist {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: rgba(255, 240, 210, 0.95);
+  letter-spacing: 0.04em;
+}
+
+.logoDivider {
+  color: rgba(200, 168, 75, 0.5);
+  font-size: 16px;
+}
+
+.logoSub {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(200, 168, 75, 0.7);
+  text-transform: uppercase;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.year {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Progress */
+.progressWrap {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  right: 32px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: none;
+  background: rgba(10, 8, 6, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 168, 75, 0.1);
+  padding: 12px 24px;
+  border-radius: 12px;
+  animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.progressTrack {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(200, 168, 75, 0.2), rgba(200, 168, 75, 1));
+  transition: width 0.15s ease-out;
+  border-radius: 2px;
+  position: relative;
+  box-shadow: 0 0 10px rgba(200, 168, 75, 0.5);
+}
+
+.progressLabel {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(200, 168, 75, 0.8);
+  min-width: 44px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scroll hint */
+.hint {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+}
+
+.hintVisible {
+  opacity: 1;
+  animation: hintFloat 3s ease-in-out infinite;
+}
+
+@keyframes hintFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+.hint span {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(200, 168, 75, 0.6);
+  text-transform: uppercase;
+  background: rgba(10, 8, 6, 0.6);
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(200, 168, 75, 0.1);
+}
+
+.hintScroll {
+  width: 24px;
+  height: 38px;
+  border: 1px solid rgba(200, 168, 75, 0.4);
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.hintWheel {
+  width: 4px;
+  height: 8px;
+  background: rgba(200, 168, 75, 0.8);
+  border-radius: 2px;
+  animation: wheelScroll 1.5s cubic-bezier(0.6, 0.05, 0.4, 1) infinite;
+}
+
+@keyframes wheelScroll {
+  0% { transform: translateY(0) scaleY(1); opacity: 1; }
+  50% { transform: translateY(14px) scaleY(1.2); opacity: 0; }
+  100% { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+
+/* Active label */
+.activeLabel {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+  animation: fadeSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.activeLabelText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(20, 16, 12, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(200, 168, 75, 0.25);
+  padding: 10px 24px;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: rgba(255, 235, 190, 0.8);
+}
+
+.activeLabelText kbd {
+  font-family: monospace;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(200, 168, 75, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #c8a84b;
+  box-shadow: 0 2px 0 rgba(200, 168, 75, 0.15);
+}
+
+/* Corner watermark */
+.corner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.corner span {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .header { padding: 16px 20px; border-radius: 0 0 16px 16px; top: 0; left: 0; right: 0; border-top: none; }
+  .progressWrap { left: 16px; right: 16px; bottom: 16px; }
+  .hint { bottom: 84px; }
+  .logoArtist { font-size: 18px; }
+  .logoSub { display: none; }
+  .logoDivider { display: none; }
+  .year { font-size: 10px; }
+  .activeLabel { top: 76px; }
+  .activeLabelText { padding: 8px 16px; font-size: 11px; }
+  .corner { bottom: 84px; right: 16px; }
+  .corner span { font-size: 8px; }
+}

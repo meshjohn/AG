@@ -1,0 +1,31 @@
+{
+  "name": "alaa-gallery",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.105.6",
+    "@react-three/fiber": "^8.16.8",
+    "@react-three/postprocessing": "^3.0.4",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.5",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "three": "^0.164.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/three": "^0.164.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,53 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  /* Lock the document so iOS Safari never scrolls/bounces the page,
+     which would paint a black background over the WebGL canvas */
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
+  background: #050403;
+  color: #e8d8b8;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+}
+
+::selection {
+  background: rgba(200, 168, 75, 0.25);
+  color: #f0e6cc;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0c0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 168, 75, 0.3);
+  border-radius: 2px;
+}
