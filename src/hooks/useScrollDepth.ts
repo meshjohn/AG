@@ -19,7 +19,7 @@ export function useScrollDepth(totalDepth: number) {
       e.preventDefault()
       galleryScroll.target = Math.max(
         0,
-        Math.min(totalDepth, galleryScroll.target + e.deltaY * 0.8)
+        Math.min(totalDepth, galleryScroll.target + e.deltaY * 0.25)
       )
     }
 
@@ -40,7 +40,7 @@ export function useScrollDepth(totalDepth: number) {
       lastTouchY = currentY
       galleryScroll.target = Math.max(
         0,
-        Math.min(totalDepth, galleryScroll.target + dy * 1.2)
+        Math.min(totalDepth, galleryScroll.target + dy * 0.5)
       )
     }
 
