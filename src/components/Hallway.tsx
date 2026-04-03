@@ -84,13 +84,14 @@ export function Hallway({ length, width, height }: HallwayProps) {
 
   const hw = width / 2
   const hh = height / 2
-  const hl = length / 2
+  const geoLength = length + 20
+  const geoCenterZ = -length / 2 + 5 // Shifts the center so the back edge goes past the back wall
 
   return (
     <group>
       {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -hh, -hl + length / 2]}>
-        <planeGeometry args={[width, length]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -hh, geoCenterZ]}>
+        <planeGeometry args={[width, geoLength]} />
         <meshStandardMaterial
           map={floorTexture}
           roughness={0.1}
@@ -101,8 +102,8 @@ export function Hallway({ length, width, height }: HallwayProps) {
       </mesh>
 
       {/* Ceiling */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, hh, -hl + length / 2]}>
-        <planeGeometry args={[width, length]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, hh, geoCenterZ]}>
+        <planeGeometry args={[width, geoLength]} />
         <meshStandardMaterial
           map={ceilTexture}
           roughness={1}
@@ -112,8 +113,8 @@ export function Hallway({ length, width, height }: HallwayProps) {
       </mesh>
 
       {/* Left wall */}
-      <mesh rotation={[0, Math.PI / 2, 0]} position={[-hw, 0, -hl + length / 2]}>
-        <planeGeometry args={[length, height]} />
+      <mesh rotation={[0, Math.PI / 2, 0]} position={[-hw, 0, geoCenterZ]}>
+        <planeGeometry args={[geoLength, height]} />
         <meshStandardMaterial
           map={wallTexture}
           roughness={0.95}
@@ -123,8 +124,8 @@ export function Hallway({ length, width, height }: HallwayProps) {
       </mesh>
 
       {/* Right wall */}
-      <mesh rotation={[0, -Math.PI / 2, 0]} position={[hw, 0, -hl + length / 2]}>
-        <planeGeometry args={[length, height]} />
+      <mesh rotation={[0, -Math.PI / 2, 0]} position={[hw, 0, geoCenterZ]}>
+        <planeGeometry args={[geoLength, height]} />
         <meshStandardMaterial
           map={wallTexture}
           roughness={0.95}
@@ -143,9 +144,9 @@ export function Hallway({ length, width, height }: HallwayProps) {
       {[-1, 1].map((side) => (
         <mesh
           key={side}
-          position={[side * (hw - 0.02), -hh + 0.03, -hl + length / 2]}
+          position={[side * (hw - 0.02), -hh + 0.03, geoCenterZ]}
         >
-          <boxGeometry args={[0.04, 0.06, length]} />
+          <boxGeometry args={[0.04, 0.06, geoLength]} />
           <meshStandardMaterial color="#c8a84b" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
@@ -154,16 +155,16 @@ export function Hallway({ length, width, height }: HallwayProps) {
       {[-1, 1].map((side) => (
         <mesh
           key={side}
-          position={[side * (hw - 0.02), hh - 0.03, -hl + length / 2]}
+          position={[side * (hw - 0.02), hh - 0.03, geoCenterZ]}
         >
-          <boxGeometry args={[0.04, 0.06, length]} />
+          <boxGeometry args={[0.04, 0.06, geoLength]} />
           <meshStandardMaterial color="#c8a84b" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
 
       {/* Recessed floor lighting strip — left */}
-      <mesh position={[-hw + 0.3, -hh + 0.01, -hl + length / 2]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[0.06, 0.01, length * 0.95]} />
+      <mesh position={[-hw + 0.3, -hh + 0.01, geoCenterZ]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.06, 0.01, geoLength * 0.95]} />
         <meshStandardMaterial
           color="#f5e6c8"
           emissive="#f5e6c8"
@@ -173,8 +174,8 @@ export function Hallway({ length, width, height }: HallwayProps) {
       </mesh>
 
       {/* Recessed floor lighting strip — right */}
-      <mesh position={[hw - 0.3, -hh + 0.01, -hl + length / 2]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[0.06, 0.01, length * 0.95]} />
+      <mesh position={[hw - 0.3, -hh + 0.01, geoCenterZ]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.06, 0.01, geoLength * 0.95]} />
         <meshStandardMaterial
           color="#f5e6c8"
           emissive="#f5e6c8"
