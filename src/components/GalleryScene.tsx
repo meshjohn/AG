@@ -12,7 +12,7 @@ import { Hallway } from "./Hallway";
 import { DustParticles } from "./DustParticles";
 import { Sculpture } from "./Sculpture";
 
-import { galleryScroll } from "@/hooks/useScrollDepth";
+import { galleryScroll, galleryLook, paintingOrbit, setPaintingActive } from "@/hooks/useScrollDepth";
 
 const TOTAL_DEPTH = paintings.length * FRAME_SPACING + 8;
 
@@ -29,6 +29,11 @@ function CameraRig({ activePainting }: CameraRigProps) {
   const isAnimating = useRef(false);
   const lookTarget = useRef(new THREE.Vector3(0, 0, -10));
   const hasEntered = useRef(false);
+
+  // Stored when focus tween completes — orbit pivots around these
+  const focusPaintingWorld = useRef(new THREE.Vector3());  // world pos of painting surface
+  const focusRadius        = useRef(5);                    // camera distance from painting
+  const focusIsLeft        = useRef(true);                 // which wall
 
   // Entrance cinematic: camera starts at z = +5, dollies in on first mount
   useEffect(() => {
@@ -62,15 +67,22 @@ function CameraRig({ activePainting }: CameraRigProps) {
   useEffect(() => {
     if (activePainting) {
       isAnimating.current = true;
+      setPaintingActive(true);
+
       const idx = paintings.indexOf(activePainting);
       const fz = -(idx * FRAME_SPACING + FRAME_SPACING);
       const isLeft = activePainting.wall === "left";
       const px = isLeft ? -WALL_X : WALL_X;
-      const camX = isLeft ? px + 5.0 : px - 5.0;
+      const camX = isLeft ? px + 3.0 : px - 3.0;
       const isPortrait = size.width < size.height;
       const shiftMagnitude = isPortrait ? 0 : 1.5;
       const offsetZ = isLeft ? -shiftMagnitude : shiftMagnitude;
       const targetZ = fz + offsetZ;
+
+      // Store orbit pivot info
+      focusPaintingWorld.current.set(px, 0.1, targetZ);
+      focusRadius.current = Math.abs(camX - px);  // ~5
+      focusIsLeft.current = isLeft;
 
       tween.current?.kill();
 
@@ -86,6 +98,7 @@ function CameraRig({ activePainting }: CameraRigProps) {
         onComplete: () => { isAnimating.current = false; },
       });
     } else {
+      setPaintingActive(false);
       tween.current?.kill();
 
       gsap.to(lookTarget.current, {
@@ -103,11 +116,48 @@ function CameraRig({ activePainting }: CameraRigProps) {
   }, [activePainting, camera]);
 
   useFrame((state) => {
-    if (!activePainting && !isAnimating.current) {
+    if (activePainting && !isAnimating.current) {
+      // ── Painting orbit mode ──────────────────────────────────────────────
+      // Camera orbits the painting on a sphere of radius `focusRadius`.
+      // Yaw  rotates left/right around the painting's vertical (Y) axis.
+      // Pitch rotates up/down.
+      // The direction from painting→camera at rest is ±X depending on wall.
+
+      const p   = focusPaintingWorld.current;
+      const R   = focusRadius.current;
+      const yaw   = paintingOrbit.yaw;
+      const pitch = paintingOrbit.pitch;
+      const side  = focusIsLeft.current ? 1 : -1;  // +1 right-of-left-wall, -1 left-of-right-wall
+
+      // Spherical coords (painting is origin, camera starts at [side*R, 0, 0])
+      const xzR = R * Math.cos(pitch);
+      camera.position.set(
+        p.x + side * xzR * Math.cos(yaw),
+        p.y + R   * Math.sin(pitch),
+        p.z + xzR * Math.sin(yaw)   // yaw swings along corridor
+      );
+
+      // Always look at the painting surface
+      camera.lookAt(p);
+
+    } else if (!activePainting && !isAnimating.current) {
+      // ── Gallery walk mode ───────────────────────────────────────────────
       camera.position.z += (-galleryScroll.z - camera.position.z) * 0.08;
+
       const time = state.clock.elapsedTime;
       camera.position.y = Math.sin(time * 0.4) * 0.025;
-      lookTarget.current.set(0, 0, camera.position.z - 10);
+      camera.position.x += (0 - camera.position.x) * 0.06;
+
+      const lookAngle  = galleryLook.x;
+      const dist       = 12;
+      const verticalDip = -Math.abs(lookAngle) * 0.08;
+
+      lookTarget.current.set(
+        camera.position.x + Math.sin(lookAngle) * dist,
+        camera.position.y + verticalDip,
+        camera.position.z - Math.cos(lookAngle) * dist
+      );
+
       camera.lookAt(lookTarget.current);
     }
   });
