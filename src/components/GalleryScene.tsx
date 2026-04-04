@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, Text, Preload } from "@react-three/drei";
 import * as THREE from "three";
@@ -151,23 +151,22 @@ function Scene({ activePainting, onPaintingClick }: SceneProps) {
         paused={activePainting !== null}
       />
 
-      {paintings.map((painting, i) => {
-        const fz = -(i * FRAME_SPACING + FRAME_SPACING);
-        const isLeft = painting.wall === "left";
-        const px = isLeft ? -WALL_X : WALL_X;
-        const ry = isLeft ? Math.PI / 2 : -Math.PI / 2;
-
+      {paintings.map((p, i) => {
+        const isLeft = p.wall === "left";
+        const sx = isLeft ? -WALL_X : WALL_X;
+        const sz = -(i * FRAME_SPACING + FRAME_SPACING);
         return (
-          <PaintingFrame
-            key={painting.id}
-            src={painting.src}
-            position={[px, 0.1, fz]}
-            rotation={[0, ry, 0]}
-            title={painting.title}
-            isActive={activePainting?.id === painting.id}
-            isAnyActive={activePainting !== null}
-            onClick={() => onPaintingClick(painting)}
-          />
+          <Suspense key={p.id} fallback={null}>
+            <PaintingFrame
+              src={p.src}
+              title={p.title}
+              position={[sx, 0.1, sz]}
+              rotation={[0, isLeft ? Math.PI / 2 : -Math.PI / 2, 0]}
+              isActive={activePainting?.id === p.id}
+              isAnyActive={activePainting !== null}
+              onClick={() => onPaintingClick(p)}
+            />
+          </Suspense>
         );
       })}
 
