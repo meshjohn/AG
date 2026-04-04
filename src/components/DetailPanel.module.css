@@ -66,6 +66,15 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
+  cursor: zoom-in;
+  transition: aspect-ratio 0.4s ease;
+}
+
+.imageWrapZoomed {
+  cursor: zoom-out;
+  aspect-ratio: auto;
+  max-height: 70vh;
 }
 
 .image {
@@ -74,6 +83,67 @@
   object-fit: cover;
   display: block;
   filter: grayscale(5%) contrast(1.05);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+}
+
+.imageZoomed {
+  transform: scale(1.55);
+  object-fit: contain;
+}
+
+.zoomHint {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: rgba(200, 168, 75, 0.7);
+  background: rgba(10, 8, 6, 0.55);
+  padding: 3px 8px;
+  border-radius: 20px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.2s;
+}
+
+.imageWrap:hover .zoomHint {
+  opacity: 1;
+}
+
+/* Action bar */
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 36px;
+  border-bottom: 1px solid rgba(200, 168, 75, 0.08);
+}
+
+.downloadBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(200, 168, 75, 0.3);
+  color: rgba(200, 168, 75, 0.7);
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.downloadBtn:hover {
+  background: rgba(200, 168, 75, 0.08);
+  border-color: rgba(200, 168, 75, 0.6);
+  color: rgba(200, 168, 75, 1);
 }
 
 .meta {

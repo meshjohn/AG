@@ -7,9 +7,14 @@ import * as THREE from 'three'
 interface DustParticlesProps {
   count?: number
   boundary?: [number, number, number]
+  paused?: boolean
 }
 
-export function DustParticles({ count = 300, boundary = [8, 5, 40] }: DustParticlesProps) {
+export function DustParticles({
+  count = 300,
+  boundary = [8, 5, 40],
+  paused = false,
+}: DustParticlesProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
@@ -18,9 +23,7 @@ export function DustParticles({ count = 300, boundary = [8, 5, 40] }: DustPartic
     for (let i = 0; i < count; i++) {
       const x = (Math.random() - 0.5) * boundary[0]
       const y = (Math.random() - 0.5) * boundary[1]
-      // Spread across the full hallway depth
       const z = -Math.random() * boundary[2]
-
       const speed = 0.04 + Math.random() * 0.12
       const offset = Math.random() * Math.PI * 2
       temp.push({ x, y, z, speed, offset })
@@ -28,11 +31,10 @@ export function DustParticles({ count = 300, boundary = [8, 5, 40] }: DustPartic
     return temp
   }, [count, boundary])
 
-  // Pre-allocate a single matrix to avoid GC pressure in the loop
   const matrix = useMemo(() => new THREE.Matrix4(), [])
 
   useFrame((state) => {
-    if (!meshRef.current) return
+    if (!meshRef.current || paused) return
     const time = state.clock.elapsedTime
 
     for (let i = 0; i < particles.length; i++) {
@@ -50,7 +52,6 @@ export function DustParticles({ count = 300, boundary = [8, 5, 40] }: DustPartic
     meshRef.current.instanceMatrix.needsUpdate = true
   })
 
-  // Use THREE.InstancedMesh directly with proper construction
   return (
     <instancedMesh ref={meshRef} count={count} frustumCulled={false}>
       <icosahedronGeometry args={[0.012, 0]} />

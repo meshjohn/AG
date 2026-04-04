@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { paintings } from '@/lib/paintings'
 import styles from './LoadingScreen.module.css'
 
 interface LoadingScreenProps {
@@ -12,25 +13,37 @@ export function LoadingScreen({ onDone }: LoadingScreenProps) {
   const [fadeOut, setFadeOut] = useState(false)
 
   useEffect(() => {
-    const duration = 2200
-    const start = Date.now()
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - start
-      const p = Math.min(elapsed / duration, 1)
-      setProgress(Math.round(p * 100))
-      if (p >= 1) {
-        clearInterval(timer)
-        setTimeout(() => {
-          setFadeOut(true)
-          setTimeout(onDone, 700) // matches CSS transition duration
-        }, 500)
+    let loaded = 0
+    const total = paintings.length
+    let finished = false
+
+    const finish = () => {
+      if (finished) return
+      finished = true
+      setProgress(100)
+      setTimeout(() => {
+        setFadeOut(true)
+        setTimeout(onDone, 700)
+      }, 400)
+    }
+
+    // Preload every painting image and track real progress
+    paintings.forEach((p) => {
+      const img = new Image()
+      img.onload = img.onerror = () => {
+        loaded++
+        setProgress(Math.round((loaded / total) * 100))
+        if (loaded >= total) finish()
       }
-    }, 16)
-    return () => clearInterval(timer)
+      img.src = p.src
+    })
+
+    // Safety fallback — proceed after 5 s regardless
+    const fallback = setTimeout(finish, 5000)
+    return () => clearTimeout(fallback)
   }, [onDone])
 
   return (
-    // .screen is the correct class (was wrongly .container before — CSS has .screen)
     <div className={`${styles.screen} ${fadeOut ? styles.fadeOut : ''}`}>
       <div className={styles.inner}>
         <h1 className={styles.title}>Alaa Mansour</h1>
@@ -43,7 +56,7 @@ export function LoadingScreen({ onDone }: LoadingScreenProps) {
         <p className={styles.percentage}>{progress}%</p>
 
         {progress === 100 && !fadeOut && (
-          <p className={styles.enterHint}>Entering the void</p>
+          <p className={styles.enterHint}>Entering the gallery</p>
         )}
       </div>
     </div>

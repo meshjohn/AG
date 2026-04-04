@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from 'react'
 import { useTexture, Text } from '@react-three/drei'
-import { useFrame, ThreeEvent } from '@react-three/fiber'
+import { useFrame, ThreeEvent, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface PaintingFrameProps {
@@ -28,24 +28,46 @@ export function PaintingFrame({
   const frameRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.PointLight>(null)
   const [hovered, setHovered] = useState(false)
+  const { camera } = useThree()
 
   const texture = useTexture(src)
 
-  const targetEmissive = useRef(0.06) // Base glow so it's never too dark
+  const targetEmissive = useRef(0.06)
   const currentEmissive = useRef(0.06)
-  const targetGlow = useRef(1.5) // Increased base spotlight drastically
+  const targetGlow = useRef(1.5)
   const currentGlow = useRef(1.5)
+
+  // Reveal animation: painting fades in when camera scrolls near
+  const revealed = useRef(false)
+  const revealProgress = useRef(0)
 
   useFrame((_, delta) => {
     if (!meshRef.current) return
 
+    // Skip if painting is far away from camera
+    const dist = Math.abs(camera.position.z - position[2])
+    if (dist >= 50) return
+
+    // Trigger reveal when camera enters within 22 units
+    if (!revealed.current && dist < 22) {
+      revealed.current = true
+    }
+
+    // Animate reveal opacity (0 → 1 over ~1.5 s)
+    if (revealed.current && revealProgress.current < 1) {
+      revealProgress.current = Math.min(1, revealProgress.current + delta * 0.65)
+    }
+
+    const mat = meshRef.current.material as THREE.MeshStandardMaterial
+    mat.opacity = revealProgress.current
+
+    // Emissive hover glow on canvas
     targetEmissive.current = hovered && !isAnyActive ? 0.2 : 0.06
     currentEmissive.current +=
       (targetEmissive.current - currentEmissive.current) * Math.min(delta * 6, 1)
-
-    const mat = meshRef.current.material as THREE.MeshStandardMaterial
     mat.emissiveIntensity = currentEmissive.current
 
+    // Point-light pulse on hover
     targetGlow.current = hovered ? 3.5 : 1.5
     currentGlow.current +=
       (targetGlow.current - currentGlow.current) * Math.min(delta * 4, 1)
@@ -68,7 +90,7 @@ export function PaintingFrame({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* Outer gold frame */}
+      {/* Outer dark frame */}
       <mesh ref={frameRef} position={[0, 0, -0.01]}>
         <boxGeometry args={[FRAME_W + BORDER * 2, FRAME_H + BORDER * 2, 0.02]} />
         <meshStandardMaterial
@@ -80,16 +102,16 @@ export function PaintingFrame({
         />
       </mesh>
 
-      {/* Inner frame accent */}
+      {/* Inner gold accent */}
       <mesh position={[0, 0, 0.0]}>
         <boxGeometry args={[FRAME_W + BORDER * 1.2, FRAME_H + BORDER * 1.2, 0.02]} />
         <meshStandardMaterial color="#c8a84b" metalness={0.9} roughness={0.2} />
       </mesh>
 
-      {/* Painting canvas */}
+      {/* Painting canvas — starts transparent, reveals on approach */}
       <mesh
         ref={meshRef}
-        position={[0, 0, 0.025]} // Safely pushed forward to avoid any overlapping 16-bit Z-buffer fighting
+        position={[0, 0, 0.025]}
         onClick={handleClick}
         onPointerOver={() => {
           setHovered(true)
@@ -107,10 +129,12 @@ export function PaintingFrame({
           metalness={0.0}
           emissive="#ffffff"
           emissiveIntensity={0}
+          transparent
+          opacity={0}
         />
       </mesh>
 
-      {/* Spotlight above painting */}
+
       <pointLight
         ref={glowRef}
         position={[0, FRAME_H * 0.8, 0.6]}
@@ -120,7 +144,7 @@ export function PaintingFrame({
         decay={2}
       />
 
-      {/* Title plate below frame */}
+      {/* Title plate */}
       <group position={[0, -(FRAME_H / 2 + BORDER + 0.16), 0.01]}>
         <mesh>
           <planeGeometry args={[1.4, 0.2]} />

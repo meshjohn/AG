@@ -1,19 +1,14 @@
 .header {
   position: fixed;
-  top: 24px;
-  left: 24px;
-  right: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
-  background: rgba(10, 8, 6, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(200, 168, 75, 0.15);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 32px 48px;
+  background: linear-gradient(to bottom, rgba(5, 4, 3, 0.95) 0%, rgba(5, 4, 3, 0) 100%);
   pointer-events: none;
   animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -68,20 +63,16 @@
 /* Progress */
 .progressWrap {
   position: fixed;
-  bottom: 32px;
-  left: 32px;
-  right: 32px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   pointer-events: none;
-  background: rgba(10, 8, 6, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(200, 168, 75, 0.1);
-  padding: 12px 24px;
-  border-radius: 12px;
+  background: linear-gradient(to top, rgba(5, 4, 3, 0.95) 0%, rgba(5, 4, 3, 0) 100%);
+  padding: 48px 48px 32px 48px;
   animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -230,6 +221,58 @@
   font-weight: bold;
   color: #c8a84b;
   box-shadow: 0 2px 0 rgba(200, 168, 75, 0.15);
+}
+
+/* Painting counter */
+.counter {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: rgba(200, 168, 75, 0.85);
+  font-variant-numeric: tabular-nums;
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+/* Audio toggle button */
+.audioBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(200, 168, 75, 0.25);
+  background: transparent;
+  color: rgba(200, 168, 75, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: all;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.audioBtn:hover {
+  color: rgba(200, 168, 75, 0.9);
+  border-color: rgba(200, 168, 75, 0.6);
+  background: rgba(200, 168, 75, 0.06);
+}
+
+.audioBtnActive {
+  color: rgba(200, 168, 75, 1);
+  border-color: rgba(200, 168, 75, 0.7);
+  box-shadow: 0 0 10px rgba(200, 168, 75, 0.25);
+  animation: audioPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes audioPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(200, 168, 75, 0.2); }
+  50%       { box-shadow: 0 0 18px rgba(200, 168, 75, 0.45); }
+}
+
+/* Navigation hint separator */
+.navSep {
+  color: rgba(200, 168, 75, 0.35);
+  margin: 0 4px;
 }
 
 /* Corner watermark */
