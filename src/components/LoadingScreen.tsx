@@ -4,8 +4,9 @@
 // Artistic loading screen with animated ornamental lines, floating dust
 // particles, an SVG sketch-line background, and a dramatic progress reveal.
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { paintings } from '@/lib/paintings'
+import { useProgress } from '@react-three/drei'
 import styles from './LoadingScreen.module.css'
 
 interface LoadingScreenProps {
@@ -31,34 +32,81 @@ export function LoadingScreen({ onDone }: LoadingScreenProps) {
   , [])
 
   // ── Asset Preloading Logic ─────────────────────────────────────────────────
-  useEffect(() => {
-    let loaded  = 0
-    const total = paintings.length
-    let finished = false
+  const { progress: currentProgress, active, total } = useProgress()
+  const finishedRef = useRef(false)
+  const manualProgress = useRef(0)
+  const isThreeDone = useRef(false)
+  const isManualDone = useRef(false)
 
-    const finish = () => {
-      if (finished) return
-      finished = true
+  useEffect(() => {
+    // 1. Update Three.js status
+    // If it started loading things, track its progress. If it's inactive, it's done.
+    if (total > 0) {
+      isThreeDone.current = (!active && currentProgress >= 100)
+    } else {
+      isThreeDone.current = !active // If it hasn't found anything to load yet but is inactive
+    }
+
+    // Update UI progress bar (Prefer Three.js progress if it's running, otherwise use manual image progress)
+    if (total > 0 && currentProgress > manualProgress.current) {
+       setProgress(Math.round(currentProgress))
+    }
+
+    // Try finishing
+    if (isThreeDone.current && isManualDone.current && !finishedRef.current) {
+      finishedRef.current = true
       setProgress(100)
       setTimeout(() => {
         setFadeOut(true)
-        setTimeout(onDone, 1000)   // matches the longer 1s CSS opacity transition
+        setTimeout(onDone, 1000)
       }, 500)
     }
+  }, [currentProgress, active, total, onDone])
+
+  useEffect(() => {
+    // 2. Manual Image Preloader
+    // Runs precisely once on mount. Ensures the progress bar reliably animates
+    // even if Three.js relies on cached textures.
+    let loaded = 0
+    const totalImgs = paintings.length
 
     paintings.forEach((p) => {
       const img = new Image()
       img.onload = img.onerror = () => {
         loaded++
-        setProgress(Math.round((loaded / total) * 100))
-        if (loaded >= total) finish()
+        manualProgress.current = Math.round((loaded / totalImgs) * 100)
+        
+        // If Threejs hasn't started yet, drive the UI bar with manual progress
+        if (total === 0) setProgress(manualProgress.current)
+
+        if (loaded >= totalImgs) {
+          isManualDone.current = true
+          // If Three.js is already done (or heavily cached), trigger completion
+          if (isThreeDone.current && !finishedRef.current) {
+            finishedRef.current = true
+            setProgress(100)
+            setTimeout(() => {
+              setFadeOut(true)
+              setTimeout(onDone, 1000)
+            }, 500)
+          }
+        }
       }
       img.src = p.src
     })
 
-    const fallback = setTimeout(finish, 5000)
+    // Safety fallback: force enter after 8 seconds no matter what
+    const fallback = setTimeout(() => {
+      if (!finishedRef.current) {
+        finishedRef.current = true
+        setProgress(100)
+        setFadeOut(true)
+        setTimeout(onDone, 1000)
+      }
+    }, 8000)
+
     return () => clearTimeout(fallback)
-  }, [onDone])
+  }, [total, onDone])
 
   // ── SVG sketch lines (procedural — no external assets) ────────────────────
   // Evenly-spaced diagonal hatching lines that evoke the graphite medium.

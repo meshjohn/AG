@@ -77,7 +77,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
     canvas.height = 256
     const ctx = canvas.getContext('2d')!
     
-    ctx.fillStyle = '#141210'
+    ctx.fillStyle = '#1e1b17'
     ctx.fillRect(0, 0, 256, 256)
     
     // Speckle noise
@@ -134,7 +134,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
         {/* Uses MeshReflectorMaterial for a premium glass reflection effect */}
         <MeshReflectorMaterial
           blur={[300, 100]}
-          resolution={1024}
+          resolution={256}
           mixBlur={1}
           mixStrength={80}
           roughness={0.15}
@@ -167,7 +167,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
           map={wallTexture}
           roughness={0.95} // Very matte
           metalness={0}
-          color="#161412"
+          color="#1e1c18"
         />
       </mesh>
 
@@ -178,7 +178,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
           map={wallTexture}
           roughness={0.95}
           metalness={0}
-          color="#161412"
+          color="#1e1c18"
         />
       </mesh>
 
@@ -222,7 +222,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
         <meshStandardMaterial
           color="#f5e6c8"
           emissive="#f5e6c8" // It glows!
-          emissiveIntensity={0.6}
+        emissiveIntensity={1.4}
           roughness={1}
         />
       </mesh>
@@ -233,7 +233,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
         <meshStandardMaterial
           color="#f5e6c8"
           emissive="#f5e6c8"
-          emissiveIntensity={0.6}
+        emissiveIntensity={1.4}
           roughness={1}
         />
       </mesh>

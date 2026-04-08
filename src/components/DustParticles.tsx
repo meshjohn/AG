@@ -16,7 +16,7 @@ interface DustParticlesProps {
 }
 
 export function DustParticles({
-  count = 300,
+  count = 120,
   boundary = [8, 5, 40],
   paused = false,
 }: DustParticlesProps) {

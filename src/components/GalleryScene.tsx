@@ -9,9 +9,9 @@
 //   • Delegates input handling to the `galleryScroll` / `galleryLook` / `paintingOrbit`
 //     module-level state objects managed by `useScrollDepth`.
 
-import { useRef, useEffect, Suspense } from "react";
+import { useRef, useEffect, Suspense, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PerspectiveCamera, Text, Preload } from "@react-three/drei";
+import { PerspectiveCamera, Text, Preload, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { paintings, Painting } from "@/lib/paintings";
@@ -225,8 +225,9 @@ function HallwayLights() {
   return (
     <>
       {/* Fill lights — enough to read paintings clearly while walking */}
-      <directionalLight position={[0, HALL_HEIGHT, 10]} intensity={0.8} color="#ffe8c4" />
-      <directionalLight position={[0, HALL_HEIGHT, -TOTAL_DEPTH / 2]} intensity={0.8} color="#ffe8c4" />
+      <directionalLight position={[0, HALL_HEIGHT, 10]} intensity={1.6} color="#ffe8c4" />
+      <directionalLight position={[0, HALL_HEIGHT, -TOTAL_DEPTH / 2]} intensity={1.6} color="#ffe8c4" />
+      <directionalLight position={[0, HALL_HEIGHT, -TOTAL_DEPTH * 0.75]} intensity={1.2} color="#ffd8a8" />
     </>
   );
 }
@@ -260,7 +261,7 @@ function WallSconce({ position, wallNormal }: {
         <meshStandardMaterial
           color="#fff8e0"
           emissive="#fff8e0"
-          emissiveIntensity={3}
+          emissiveIntensity={6}
           roughness={0.3}
         />
       </mesh>
@@ -268,8 +269,8 @@ function WallSconce({ position, wallNormal }: {
       <pointLight
         position={[wallNormal * ARM, 0, 0.06]}
         color="#ffd580"
-        intensity={2}
-        distance={6}
+        intensity={5}
+        distance={10}
         decay={2}
       />
     </group>
@@ -308,7 +309,7 @@ function Scene({ activePainting, onPaintingClick }: SceneProps) {
       <fog attach="fog" args={["#030508", FOG_NEAR, FOG_FAR]} />
 
       {/* Very dim ambient fill — sconces & spotlights provide the real illumination */}
-      <ambientLight color="#1a202a" intensity={1.2} />
+      <ambientLight color="#2a3550" intensity={2.4} />
       <HallwayLights />
 
       {/* Procedurally textured hallway (floor, ceiling, walls, trim, floor strips) */}
@@ -411,6 +412,9 @@ interface GallerySceneProps {
  * device pixel ratio of 1.5× to avoid GPU overload on high-DPI screens.
  */
 export function GalleryScene({ activePainting, onPaintingClick }: GallerySceneProps) {
+  // Start with a safe DPR of 1, and let PerformanceMonitor adjust it
+  const [dpr, setDpr] = useState(1);
+
   return (
     <Canvas
       style={{
@@ -424,16 +428,18 @@ export function GalleryScene({ activePainting, onPaintingClick }: GalleryScenePr
         antialias: true,             // smooth edges (MSAA)
         alpha: false,                // opaque canvas — slightly faster compositing
         toneMapping: THREE.ACESFilmicToneMapping, // cinematic film-style tone curve
-        toneMappingExposure: 1.25,   // slightly brightened exposure
+        toneMappingExposure: 1.7,    // brightened for a well-lit gallery feel
         powerPreference: "high-performance",      // request discrete GPU on laptops
         stencil: false,              // not used — disable to save VRAM
         depth: true,                 // depth buffer required for 3D ordering
       }}
-      // Cap pixel ratio at 1.5× — retina displays at 2× or 3× are very expensive
-      dpr={Math.min(window?.devicePixelRatio ?? 1, 1.5)}
+      // Dynamic DPR tracking for huge performance gains on mobile
+      dpr={dpr}
       shadows={false}        // no real-time shadows — they would cost too much GPU
       frameloop="always"     // render every frame (not just on interaction)
     >
+      {/* Auto-scales resolution down to 0.7x if framing drops, up to 1.5x if running at 60fps */}
+      <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(0.7)} />
       <Scene activePainting={activePainting} onPaintingClick={onPaintingClick} />
     </Canvas>
   );

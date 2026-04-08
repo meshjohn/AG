@@ -51,12 +51,12 @@ export function PaintingFrame({
   // We lerp (smoothly interpolate) `current` towards `target` every frame.
   
   // Emissive: How much the painting itself glows from within
-  const targetEmissive = useRef(0.06)
-  const currentEmissive = useRef(0.06)
+  const targetEmissive = useRef(0.12)
+  const currentEmissive = useRef(0.12)
   
   // Light intensity: The strength of the SpotLight sitting over the frame
-  const targetGlow = useRef(3.5)
-  const currentGlow = useRef(3.5)
+  const targetGlow = useRef(6.5)
+  const currentGlow = useRef(6.5)
 
   // Reveal effect: Paintings start invisible and fade in as the user walks near them.
   // This saves performance and looks poetic.
@@ -94,7 +94,7 @@ export function PaintingFrame({
     // 4. Emissive / Glow Interpolation
     // If the user hovers over the frame (AND no painting is currently focused/zoomed),
     // increase the inner glow to indicate "clickable".
-    targetEmissive.current = hovered && !isAnyActive ? 0.2 : 0.06
+    targetEmissive.current = hovered && !isAnyActive ? 0.32 : 0.12
     
     // Lerp logic: current += (target - current) * speed
     currentEmissive.current +=
@@ -104,7 +104,7 @@ export function PaintingFrame({
     mat.emissiveIntensity = currentEmissive.current
 
     // 5. Do the exact same thing for the external PointLight 
-    targetGlow.current = hovered ? 6.0 : 3.5
+    targetGlow.current = hovered ? 11.0 : 6.5
     currentGlow.current +=
       (targetGlow.current - currentGlow.current) * Math.min(delta * 4, 1)
     if (spotRef.current) {
@@ -200,7 +200,7 @@ export function PaintingFrame({
         angle={0.45}
         penumbra={0.6}
         color="#ffe8c4"
-        intensity={3.5}
+        intensity={6.5}
         distance={12}
         decay={2}
       />
