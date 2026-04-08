@@ -134,7 +134,7 @@ export function Hallway({ length, width, height }: HallwayProps) {
         {/* Uses MeshReflectorMaterial for a premium glass reflection effect */}
         <MeshReflectorMaterial
           blur={[300, 100]}
-          resolution={256}
+          resolution={512}
           mixBlur={1}
           mixStrength={80}
           roughness={0.15}

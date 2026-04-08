@@ -438,8 +438,8 @@ export function GalleryScene({ activePainting, onPaintingClick }: GalleryScenePr
       shadows={false}        // no real-time shadows — they would cost too much GPU
       frameloop="always"     // render every frame (not just on interaction)
     >
-      {/* Auto-scales resolution down to 0.7x if framing drops, up to 1.5x if running at 60fps */}
-      <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(0.7)} />
+      {/* Auto-scales resolution down to 1x if framing drops, up to 1.5x if running smoothly. Never goes below 1x to prevent ugly pixelation. */}
+      <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(1)} />
       <Scene activePainting={activePainting} onPaintingClick={onPaintingClick} />
     </Canvas>
   );
