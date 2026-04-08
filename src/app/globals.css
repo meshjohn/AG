@@ -21,8 +21,8 @@ body {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: auto;
   touch-action: none;
-  background: #050403;
-  color: #e8d8b8;
+  background: #030508;
+  color: #eef0f2;
   font-family: 'Cormorant Garamond', Georgia, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,8 +35,8 @@ canvas {
 }
 
 ::selection {
-  background: rgba(200, 168, 75, 0.25);
-  color: #f0e6cc;
+  background: rgba(191, 161, 95, 0.3);
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar {
@@ -44,10 +44,10 @@ canvas {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0e0c0a;
+  background: #05070a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(200, 168, 75, 0.3);
+  background: rgba(191, 161, 95, 0.4);
   border-radius: 2px;
 }

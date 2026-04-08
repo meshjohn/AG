@@ -1,13 +1,34 @@
+// ─── Painting Data Types & Collection ───────────────────────────────────────
+// This module defines the shape of each artwork and exports the full list
+// of paintings displayed in the gallery.
+
+/**
+ * Represents a single artwork in the gallery.
+ * Each painting is placed on either the left or right wall of the hallway.
+ */
 export interface Painting {
+  /** Unique numeric identifier used for URL state (`?id=`) and ordering. */
   id: number
+  /** Display name shown on the title plate below the frame and in the detail panel. */
   title: string
+  /** Art medium used, e.g. "Graphite on paper". */
   medium: string
+  /** Year the artwork was created. */
   year: string
+  /** Short prose description shown in the detail panel. */
   description: string
+  /** Public path to the painting image (served from /public/images/). */
   src: string
+  /** Which wall the painting hangs on — alternates to create a corridor feel. */
   wall: 'left' | 'right'
 }
 
+/**
+ * The full ordered collection of artworks in the gallery.
+ * The array index determines Z-position in the hallway:
+ *   z = -(index * FRAME_SPACING + FRAME_SPACING)
+ * Paintings alternate walls to draw the viewer's gaze across the corridor.
+ */
 export const paintings: Painting[] = [
   {
     id: 1,
@@ -16,7 +37,7 @@ export const paintings: Painting[] = [
     year: '2026',
     description: 'Two faces meet at a vanishing point — a study in proximity and distance, rendered in fine pencil strokes.',
     src: '/images/painting-01.jpg',
-    wall: 'left',
+    wall: 'left',   // hangs on the left wall
   },
   {
     id: 2,
@@ -25,7 +46,7 @@ export const paintings: Painting[] = [
     year: '2026',
     description: 'A close study of overlapping gazes, where lashes become landscapes and pupils hold entire skies.',
     src: '/images/painting-02.jpg',
-    wall: 'right',
+    wall: 'right',  // hangs on the right wall
   },
   {
     id: 3,

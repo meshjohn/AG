@@ -1,12 +1,15 @@
+/* ─── LoadingScreen ─────────────────────────────────────────────────────────── */
+
 .screen {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: #050403;
+  background: #030508;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.7s ease;
+  overflow: hidden;
+  transition: opacity 1s ease;
 }
 
 .fadeOut {
@@ -14,39 +17,157 @@
   pointer-events: none;
 }
 
+/* ── Animated SVG sketch lines in the background ── */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.35;
+}
+
+/* ── Floating dust particles ── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(191, 161, 95, 0.6);
+  pointer-events: none;
+  animation: drift linear infinite;
+}
+
+@keyframes drift {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(20px) scale(0.4); opacity: 0; }
+}
+
+/* ── Inner content stack ── */
 .inner {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-}
-.title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 32px;
-  color: #f0e1be;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  margin-bottom: 8px;
+  gap: 0;
   text-align: center;
 }
 
-.subtitle {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 11px;
-  color: rgba(200, 168, 75, 0.6);
-  letter-spacing: 0.4em;
+/* ── Ornamental divider line that draws in ── */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.ornamentLine {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(191, 161, 95, 0.5));
+  animation: expandLine 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  transform-origin: right center;
+}
+
+.ornamentLine:last-child {
+  background: linear-gradient(90deg, rgba(191, 161, 95, 0.5), transparent);
+  transform-origin: left center;
+}
+
+@keyframes expandLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.ornamentDiamond {
+  width: 6px;
+  height: 6px;
+  background: rgba(191, 161, 95, 0.8);
+  transform: rotate(45deg);
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* ── Title ── */
+.title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(36px, 6vw, 64px);
+  color: #eef0f2;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.05;
+  font-style: italic;
+  margin: 0 0 8px;
+  animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.titleAccent {
+  display: block;
+  font-size: 0.5em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  color: rgba(191, 161, 95, 0.9);
   text-transform: uppercase;
-  margin-bottom: 48px;
+  margin-bottom: 4px;
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+/* ── Quote ── */
+.quote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(13px, 2vw, 16px);
+  font-style: italic;
+  color: rgba(200, 195, 185, 0.45);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  max-width: 380px;
+  margin: 20px 0 48px;
+  animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* ── Progress area ── */
+.progressArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+  width: 280px;
+}
+
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(191, 161, 95, 0.4);
   font-weight: 600;
 }
 
 .barContainer {
-  width: 240px;
-  height: 2px;
-  background-color: rgba(255, 255, 255, 0.08);
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
   position: relative;
-  overflow: hidden;
-  border-radius: 2px;
+}
+
+/* Animated shimmer track */
+.barContainer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(191,161,95,0.12) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
 }
 
 .bar {
@@ -54,40 +175,60 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(90deg, rgba(200, 168, 75, 0.4), rgba(200, 168, 75, 1));
-  transition: width 0.3s ease-out;
-  box-shadow: 0 0 12px rgba(200, 168, 75, 0.6);
+  background: linear-gradient(90deg, rgba(191, 161, 95, 0.3), rgba(191, 161, 95, 1));
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 18px rgba(191, 161, 95, 0.5);
+}
+
+/* Glowing head of the progress bar */
+.bar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -3px;
+  width: 4px;
+  height: 7px;
+  background: rgba(191, 161, 95, 1);
+  border-radius: 2px;
+  box-shadow: 0 0 10px 4px rgba(191, 161, 95, 0.8);
 }
 
 .percentage {
-  margin-top: 24px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 13px;
-  color: rgba(200, 168, 75, 0.8);
-  letter-spacing: 0.15em;
+  color: rgba(191, 161, 95, 0.6);
+  letter-spacing: 0.2em;
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  align-self: flex-end;
 }
 
+/* ── Entering hint ── */
 .enterHint {
   position: absolute;
-  bottom: 64px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.25em;
+  bottom: 48px;
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.35em;
   text-transform: uppercase;
   font-weight: 600;
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.7; }
+}
+
+/* ── Shared fade-up keyframe ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 600px) {
-  .title { font-size: 24px; }
-  .subtitle { font-size: 9px; letter-spacing: 0.25em; }
-  .barContainer { width: 180px; }
+  .title         { font-size: 36px; }
+  .ornamentLine  { width: 48px; }
+  .progressArea  { width: 220px; }
+  .quote         { font-size: 13px; max-width: 280px; }
 }
